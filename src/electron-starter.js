@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Menu, Tray, } = require('electron')
+const {app, BrowserWindow, } = require('electron')
 
 const url = require('url')
 const path = require('path')
@@ -8,30 +8,18 @@ const path = require('path')
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-// Keep a global reference of the tray object
-let tray = null
-
 function createWindow () {
-  const iconPath = path.join(__dirname, '/../build/favicon.ico')
-  tray = new Tray(iconPath)
-
-  const contextMenu = Menu.buildFromTemplate([
-    { label: 'Item1', type: 'normal' },
-    { label: 'Item2', type: 'normal' },
-    { label: 'Item3', type: 'normal' },
-    { label: 'Item4', type: 'normal' },
-  ])
-
-  tray.setToolTip('Ceci est mon application')
-  tray.setContextMenu(contextMenu)
-
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1281,
+    height: 800,
+    minWidth: 1281,
+    minHeight: 800,
+    show: false,
     frame: false,
+    icon: path.join(__dirname, 'assets/icons/png/64x64.png'),
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: false
     }
   })
 
@@ -53,6 +41,10 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
+  })
+
+  mainWindow.on('ready-to-show', () => {
+    mainWindow.show()
   })
 }
 

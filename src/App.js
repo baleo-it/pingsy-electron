@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Container, Row, Col, } from 'shards-react'
 
+import { TraySystem, } from './libs/tray'
 import { FormWebsite } from './components/Forms'
 import { List, } from './components/Lists'
 import { withWebsites } from './WebsitesProvider'
@@ -17,6 +18,10 @@ const defaultWebsiteForm = {
 class App extends Component {
   state = {
     websiteForm: defaultWebsiteForm,
+  }
+
+  componentDidMount() {
+    TraySystem.init()
   }
 
   onFormSubmit = e => {

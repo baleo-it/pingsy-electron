@@ -1,33 +1,33 @@
+const { Tray, Menu, nativeImage, } = require('electron')
+
 const path = require('path')
-const electron = window.require('electron')
-const { Menu, Tray, } = electron
 
-class MenuTraySystem {
-	defaultMenuItems = [
-		{ label: 'Item1', type: 'normal' },
-		{ label: 'Item2', type: 'normal' },
-		{ label: 'Item3', type: 'normal' },
-		{ label: 'Item4', type: 'normal' },
-	]
+let tray
 
-	constructor(iconPath) {
-		this.tray = new Tray(iconPath)
-	}
+const TraySystem = {
+    init: () => {
+        tray = new Tray(path.join(__dirname, '../assets/icons/png/16x16.png'))
+        const contextMenu = Menu.buildFromTemplate([
+            { role: 'quit' },
+        ])
 
-	init = () => {
-		this.setToolTip('Pingsy Electron - Loading...')
-		this.setMenu(this.defaultMenuItems)
-	}
+        tray.setToolTip('Pingsy Electron')
+        tray.setContextMenu(contextMenu)
+    },
+    update: items => {
+        const updatedItems = items.map(item => ({
+            type: 'normal',
+            id: item.id,
+            label: item.name,
+            sublabel: item.url,
+            icon: item.status === 'online'
+                ? nativeImage.createFromPath(path.join(__dirname, '../assets/icons/png/online.png'))
+                    : nativeImage.createFromPath(path.join(__dirname, '../assets/icons/png/offline.png')),
+        }))
 
-	setToolTip = tooltip => this.tray.setToolTip(tooltip)
-
-	setMenu = (menuItems) => {
-		const menu = Menu.buildFromTemplate(menuItems)
-		this.tray.setContextMenu(menu)
-	}
+        const updatedMenu = Menu.buildFromTemplate(updatedItems)
+        tray.setContextMenu(updatedMenu)
+    }
 }
 
-const icon = path.join(__dirname, '../assets/icons/png/16x16.png')
-const TraySystem = new MenuTraySystem(icon)
-
-export { TraySystem }
+module.exports = TraySystem

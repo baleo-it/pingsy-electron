@@ -36,6 +36,8 @@ class WebsitesProvider extends Component {
     }
 
     componentDidMount() {
+        const { ipcRenderer } = this.props
+
         this.statusCheckSystem = setInterval(async () => {
             const { websites } = this.state
 
@@ -63,17 +65,27 @@ class WebsitesProvider extends Component {
                 const updatedWebsites = await Promise.all(promises)
                 this.updateWebsites(updatedWebsites)
             }
-        }, 5000)
+        }, 30000)
+
+        ipcRenderer.on('message', this.logIpc)
     }
 
     componentWillUnmount() {
+        const { ipcRenderer } = this.props
+
         if (this.statusCheckSystem) {
             clearInterval(this.statusCheckSystem)
         }
+
+        ipcRenderer.removeAllListeners('message')
     }
 
+    logIpc = (evt, ...args) => console.log('IPC Message', args)
+
     updateWebsites = updatedWebsites => {
+        const { ipcRenderer } = this.props
         this.setState({ websites: updatedWebsites })
+        ipcRenderer.send('action', 'update-tray', JSON.stringify(updatedWebsites))
     }
 
     render() {

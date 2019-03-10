@@ -1,5 +1,6 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, } = require('electron')
+const { app, BrowserWindow, ipcMain, } = require('electron')
+const TraySystem = require('./libs/tray')
 
 const url = require('url')
 const path = require('path')
@@ -9,17 +10,20 @@ const path = require('path')
 let mainWindow
 
 function createWindow () {
+  // Initialize Tray
+  TraySystem.init()
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1281,
-    height: 800,
-    minWidth: 1281,
-    minHeight: 800,
+    height: 720,
+    width: 1280,
+    transparent: true,
     show: false,
     frame: false,
+    resizable: true,
     icon: path.join(__dirname, 'assets/icons/png/64x64.png'),
     webPreferences: {
-      nodeIntegration: false
+      nodeIntegration: true
     }
   })
 
@@ -33,7 +37,7 @@ function createWindow () {
   mainWindow.loadURL(startURL)
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -45,6 +49,19 @@ function createWindow () {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+  })
+
+  ipcMain.on('action', (evt, ...args) => {
+    console.log('action', args)
+
+    if (args[0] === 'update-tray') {
+      const items = JSON.parse(args[1])
+      console.log('items to update', items)
+      TraySystem.update(items)
+      evt.sender.send('message', 'Tray updated!')
+    } else {
+      evt.sender.send('message', `Arg: ${args.toString()}`, JSON.stringify(args))
+    }
   })
 }
 

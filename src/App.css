@@ -2,11 +2,27 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   text-align: center;
-  padding: 24px;
-  height: 100%;
-  width: 100%;
+  overflow: hidden;
+}
+
+header {
+  -webkit-app-region: drag;
+  background-color: #3498db;
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 45px;
+
+  margin-bottom: 24px;
+}
+
+header h1 {
+  color: inherit;
+  font-size: 24px;
 }
 
 main {

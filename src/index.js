@@ -6,8 +6,10 @@ import * as serviceWorker from './serviceWorker'
 
 import { WebsitesProvider, } from './WebsitesProvider'
 
+const { ipcRenderer } = window.require('electron')
+
 ReactDOM.render(
-    <WebsitesProvider>
+    <WebsitesProvider ipcRenderer={ipcRenderer}>
         <App />
     </WebsitesProvider>,
     document.getElementById('root')
